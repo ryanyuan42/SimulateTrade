@@ -41,7 +41,10 @@ class WeakClf:
         quantile_factor = self._div_quantile(X[:, self.k])
         prediction = np.empty(len(X))
         for i, q in enumerate(quantile_factor):
-            prediction[i] = self._predict(int(q))
+            if np.isnan(q):
+                prediction[i] = 0
+            else:
+                prediction[i] = self._predict(int(q))
         return prediction
 
 
@@ -80,9 +83,26 @@ class Adaboost:
         return prediction
 
 
+class enhancedAda:
+    def __init__(self, ada_clfs):
+        self.ada_clfs = ada_clfs
+        self.weight = 1 / len(ada_clfs)
+
+    def fit(self, *args):
+        for ada, data in zip(self.ada_clfs, args):
+            X, y = data[0], data[1]
+            ada.fit(X, y)
+
+    def predict(self, X):
+        prediction = 0
+        for ada in self.ada_clfs:
+            prediction += ada.predict(X)
+        return prediction
+    
+
 def normalize_factor(X):
     import pandas as pd
-    return pd.DataFrame(X).apply(lambda x: (x.argsort().argsort() + 1) / len(x)).values
+    return pd.DataFrame(X).apply(lambda x: x.rank() / len(x)).values
 
 
 if __name__ == "__main__":

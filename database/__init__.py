@@ -3,7 +3,7 @@ import os
 import pandas as pd
 w.start()
 # res = w.wsd('603996.SH', 'open, high, low, close, volume', '2007-01-01', '2017-10-07', 'unit=1;PriceAdj=B')
-BASEPATH = os.path.dirname(__file__)
+BASEPATH = 'E:\Python Working Space\SimulateTradeData'
 
 with open('tickers') as f:
     tickers = f.read().strip().split(',')
@@ -27,7 +27,7 @@ def get_basic_market_data():
     panel = dict()
     first = True
     for ticker in tickers:
-        res = w.wsd(ticker, 'open, high, low, close, volume', '2007-01-01', '2017-10-07', 'unit=1;PriceAdj=B')
+        res = w.wsd(ticker, 'open, high, low, close, volume', '2007-01-01', '2017-11-09', 'unit=1;PriceAdj=B')
         dataframe = ts_from_wind(res)
         if first:
             fields = res.Fields
@@ -65,7 +65,8 @@ def get_fundamental_market_data(factor):
 
 
 if __name__ == "__main__":
-    factors = "roe_ttm,pe_ttm,pb,pcf_ocf_ttm,mkt_freeshares,mkt_cap_float,mkt_cap_ashare2,turn,roa_ttm,grossmargin,assetsturn,debttoassets"
+    # factors = "roe_ttm,pe_ttm,pb,pcf_ocf_ttm,mkt_freeshares,mkt_cap_float,mkt_cap_ashare2,turn,roa_ttm,grossmargin,assetsturn,debttoassets"
+    factors = "roe, pe, roa, pcf_ocf"
     for factor in factors.split(','):
         get_fundamental_market_data(factor)
         print(factor)
